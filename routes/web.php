@@ -8,7 +8,11 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+
+    $no_of_farmers = \App\Models\Farmer::all()->count();
+    $total_borrowed = \App\Models\Loan::all()->sum("amount");
+    return view('dashboard', ["no_of_farmers" => $no_of_farmers, "total_borrowed" => $total_borrowed]);
+
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
