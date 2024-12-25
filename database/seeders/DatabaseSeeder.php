@@ -16,7 +16,8 @@ class DatabaseSeeder extends Seeder
 
 
         $this->call([
-            FarmersTableSeeder::class
+            FarmersTableSeeder::class,
+            LoansTableSeeder::class
         ]);
         // User::factory(10)->create();
 
