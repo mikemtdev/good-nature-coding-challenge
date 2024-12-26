@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\FarmerController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -15,10 +16,14 @@ Route::get('/dashboard', function () {
     $pending_loans = \App\Models\Loan::query()->where("status", "pending")->count();
     $rejected_loans = \App\Models\Loan::query()->where("status", "rejected")->count();
 
-//dd($approved_loans);
     return view('dashboard', ["no_of_farmers" => $no_of_farmers, "total_borrowed" => $total_borrowed,"approved_loans"=> $approved_loans, "pending_loans"=>$pending_loans, "rejected_loans"=>$rejected_loans, ]);
 
 })->middleware(['auth', 'verified'])->name('dashboard');
+
+
+// Farmers
+Route::resource('/farmers', FarmerController::class);
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
