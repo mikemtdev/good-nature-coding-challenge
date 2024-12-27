@@ -14,10 +14,10 @@ Route::get('/', function () {
 Route::get('/dashboard', function () {
 
     $no_of_farmers = \App\Models\Farmer::all()->count();
-    $total_borrowed = \App\Models\Loan::query()->where("status", "approved")->sum("amount");
-    $approved_loans = \App\Models\Loan::query()->where("status", "approved")->count();
-    $pending_loans = \App\Models\Loan::query()->where("status", "pending")->count();
-    $rejected_loans = \App\Models\Loan::query()->where("status", "rejected")->count();
+    $total_borrowed = \Modules\LoanManagement\Models\Loan::query()->where("status", "approved")->sum("amount");
+    $approved_loans = \Modules\LoanManagement\Models\Loan::query()->where("status", "approved")->count();
+    $pending_loans = \Modules\LoanManagement\Models\Loan::query()->where("status", "pending")->count();
+    $rejected_loans = \Modules\LoanManagement\Models\Loan::query()->where("status", "rejected")->count();
 
     return view('dashboard', ["no_of_farmers" => $no_of_farmers, "total_borrowed" => $total_borrowed,"approved_loans"=> $approved_loans, "pending_loans"=>$pending_loans, "rejected_loans"=>$rejected_loans, ]);
 
@@ -27,16 +27,12 @@ Route::get('/dashboard', function () {
 // Farmers
 Route::resource('/farmers', FarmerController::class);
 
-Route::resource('/loans', LoanController::class);
-Route::post('/loans/{loan}/approve', [LoanController::class, 'approve'])->name('loans.approve');
-Route::post('/loans/{loan}/reject', [LoanController::class, 'reject'])->name('loans.reject');
-Route::post('/loans/{loan}/repaid', [LoanController::class, 'markAsRepaid'])->name('loans.repaid');
+
 
 // Modules
 Route::resource('/modules',ModulesController::class);
 Route::post('/modules/toggle/{moduleName}', [ModulesController::class, 'toggle'])->name('modules.toggle');
 
-// Reports
 Route::get('/reports', [ReportController::class, 'index'])->name('reports');
 
 Route::middleware('auth')->group(function () {

@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Models;
+namespace Modules\LoanManagement\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Farmer;
 
 class Loan extends Model
 {
@@ -19,6 +20,6 @@ class Loan extends Model
 
     public function farmer()
     {
-        return $this->belongsTo(farmer::class);
+        return $this->belongsTo(Farmer::class);
     }
 }

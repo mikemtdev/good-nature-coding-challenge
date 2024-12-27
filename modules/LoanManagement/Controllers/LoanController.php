@@ -1,10 +1,9 @@
 <?php
-
-namespace App\Http\Controllers;
-
+namespace Modules\LoanManagement\Controllers;
+use App\Http\Controllers\Controller;
 use App\Models\Farmer;
-use App\Models\loan;
 use Illuminate\Http\Request;
+use Modules\LoanManagement\Models\Loan;
 
 class LoanController extends Controller
 {
@@ -12,14 +11,16 @@ class LoanController extends Controller
 
     public function index()
     {
-        $loans = loan::with('farmer')->paginate(10);
-        return view('loans.index', compact('loans'));
+        $loans = Loan::with('farmer')->paginate(10);
+//        dd($loans->);
+        return view('LoanManagement::index', compact('loans'));
     }
 
     public function create()
     {
+
         $farmers = Farmer::all();
-        return view('loans.create', compact('farmers'));
+        return view('LoanManagement::create', compact('farmers'));
     }
 
     public function store(Request $request)
@@ -46,14 +47,14 @@ class LoanController extends Controller
 
     public function reject($id)
     {
-        $loan = loan::findOrFail($id);
+        $loan = Loan::findOrFail($id);
         $loan->update(['status'=> 'approved']);
         return redirect()->back()->with("success", "Loan rejected successfully");
     }
 
     public function markAsRepaid($id)
     {
-        $loan = loan::findOrFail($id);
+        $loan = Loan::findOrFail($id);
         $loan->update(['status' => "repaid"]);
         return redirect()->back()->with("success", "Loan Repaid successfully");
     }
