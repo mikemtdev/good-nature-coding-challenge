@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\farmer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 
 class FarmerController extends Controller
 {
@@ -31,5 +32,23 @@ class FarmerController extends Controller
         Farmer::create($request->only('name', 'phone', 'location'));
 
         return redirect()->route("farmers.index")->with("success",'Farmer added successfully!' );
+    }
+
+    public function destroy($id)
+    {
+
+        if(Farmer::destroy($id)){
+        Artisan::call("cache:clear");
+        Artisan::call("view:clear");
+        //            flash(translate('Farmer has been deleted successfully'))->success();
+        return back();
+                }
+
+
+
+
+
+
+        return back();
     }
 }
