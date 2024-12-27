@@ -28,7 +28,7 @@
             @endisset
 
             <!-- Page Content -->
-                <div class="flex w-full h-screen ">
+                <div class="flex w-full min-h-screen ">
                     <!-- Sidebar -->
                     <aside class="w-56 shadow-lg min-h-screen  bg-white dark:bg-gray-800">
                         <div class="p-4 border-b">
