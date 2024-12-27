@@ -24,6 +24,13 @@ Route::get('/dashboard', function () {
 // Farmers
 Route::resource('/farmers', FarmerController::class);
 
+Route::resource('/loans', LoanController::class);
+Route::post('/loans/{loan}/approve', [LoanController::class, 'approve'])->name('loans.approve');
+Route::post('/loans/{loan}/reject', [LoanController::class, 'reject'])->name('loans.reject');
+Route::post('/loans/{loan}/repaid', [LoanController::class, 'markAsRepaid'])->name('loans.repaid');
+
+// Modules
+
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
