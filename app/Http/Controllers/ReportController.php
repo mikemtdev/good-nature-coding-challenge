@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Farmer;
-use App\Models\Loan;
 use Illuminate\Http\Request;
+use Modules\LoanManagement\Models\Loan;
 
 class ReportController extends Controller
 {
