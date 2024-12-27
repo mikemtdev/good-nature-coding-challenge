@@ -22,6 +22,7 @@ class FarmerController extends Controller
         return view("farmers.create");
     }
 
+
     public function store(Request $request)
     {
         $request->validate([     'name' => 'required|string|max:255',
@@ -32,6 +33,26 @@ class FarmerController extends Controller
         Farmer::create($request->only('name', 'phone', 'location'));
 
         return redirect()->route("farmers.index")->with("success",'Farmer added successfully!' );
+    }
+
+    public function edit(Farmer $farmer)
+    {
+        return view("farmers.edit", compact('farmer'));
+    }
+
+
+    public function update(Request $request, Farmer $farmer)
+    {
+
+
+        $request->validate([     'name' => 'required|string|max:255',
+            'phone' => 'required|string|max:15',
+            'location' => 'required|string|max:255',]);
+
+
+        $farmer->update($request->only('name', 'phone', 'location'));
+
+        return redirect()->route("farmers.index")->with("success", 'Farmer updated successfully!');
     }
 
     public function destroy($id)
