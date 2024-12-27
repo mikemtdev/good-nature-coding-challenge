@@ -1,66 +1,268 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Documentation: Dynamic Module Management in Laravel
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Overview
 
-## About Laravel
+This documentation provides a comprehensive guide for managing modules dynamically in a Laravel application. The module management system allows uploading, activating, deactivating, listing, and deleting modules. Each module is self-contained, with its routes, views, controllers, and configuration stored in the `modules/` directory.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+---
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Features
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+1. **Module Upload**: Upload `.zip` files containing module definitions and extract them into the `modules/` directory.
+2. **Module Activation/Deactivation**: Toggle module availability dynamically through the user interface.
+3. **Module Listing**: Display all modules and their statuses on an admin dashboard.
+4. **Module Deletion**: Remove a module and optionally rollback related migrations.
+5. **Dynamic Loading**: Load active modules during application runtime.
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Directory Structure
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+### Base Directory
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+The base `modules/` directory contains subdirectories for each module.
 
-## Laravel Sponsors
+```
+modules/
+├── LoanManagement/
+│   ├── Controllers/
+│   ├── Models/
+│   ├── Migrations/
+│   ├── Views/
+│   ├── routes.php
+│   └── module.json
+├── FarmerSupport/
+│   ├── Controllers/
+│   ├── Models/
+│   ├── Migrations/
+│   ├── Views/
+│   ├── routes.php
+│   └── module.json
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### `module.json`
 
-### Premium Partners
+Each module contains a `module.json` file with metadata:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+```json
+{
+    "name": "Loan Management",
+    "description": "Manage loans for farmers.",
+    "href": "/loan",
+    "status": "active"
+}
+```
 
-## Contributing
+- **name**: The display name of the module.
+- **description**: A short description of the module.
+- **href**: This is the route to rendered in the side navigation.
+- **status**: `active` or `inactive`.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## Module Management Features
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+### 1. Upload Module
 
-## Security Vulnerabilities
+#### **Routes**
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```php
+Route::get('/modules/upload', [ModuleController::class, 'showUploadForm'])->name('modules.upload.form');
+Route::post('/modules/upload', [ModuleController::class, 'uploadModule'])->name('modules.upload');
+```
 
-## License
+#### **Controller Methods**
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```php
+public function showUploadForm()
+{
+    return view('modules.upload');
+}
+
+public function uploadModule(Request $request)
+{
+    $request->validate([
+        'module' => 'required|mimes:zip|max:20480',
+    ]);
+
+    $uploadedFile = $request->file('module');
+    $moduleName = pathinfo($uploadedFile->getClientOriginalName(), PATHINFO_FILENAME);
+    $modulePath = base_path("modules/$moduleName");
+
+    if (File::exists($modulePath)) {
+        return redirect()->back()->withErrors(['Module already exists.']);
+    }
+
+    $tempPath = storage_path("app/tmp/$moduleName");
+    File::makeDirectory($tempPath, 0755, true);
+
+    $uploadedFile->move($tempPath, $uploadedFile->getClientOriginalName());
+
+    $zip = new ZipArchive;
+    $zipFilePath = "$tempPath/{$uploadedFile->getClientOriginalName()}";
+    if ($zip->open($zipFilePath) === true) {
+        $zip->extractTo(base_path('modules'));
+        $zip->close();
+    } else {
+        File::deleteDirectory($tempPath);
+        return redirect()->back()->withErrors(['Failed to extract the module.']);
+    }
+
+    File::deleteDirectory($tempPath);
+
+    return redirect()->route('modules.index')->with('success', "Module '$moduleName' uploaded and installed successfully.");
+}
+```
+
+#### **Blade Template**
+
+`resources/views/modules/upload.blade.php`
+
+```blade
+<form action="{{ route('modules.upload') }}" method="POST" enctype="multipart/form-data">
+    @csrf
+    <input type="file" name="module" accept=".zip" required>
+    <button type="submit">Upload Module</button>
+</form>
+```
+
+---
+
+### 2. Activate/Deactivate Module
+
+#### **Route**
+
+```php
+Route::post('/modules/toggle/{moduleName}', [ModuleController::class, 'toggleModule'])->name('modules.toggle');
+```
+
+#### **Controller Method**
+
+```php
+public function toggleModule($moduleName)
+{
+    $modulePath = base_path("modules/$moduleName/module.json");
+
+    if (File::exists($modulePath)) {
+        $config = json_decode(File::get($modulePath), true);
+        $config['status'] = $config['status'] === 'active' ? 'inactive' : 'active';
+        File::put($modulePath, json_encode($config, JSON_PRETTY_PRINT));
+    }
+
+    return redirect()->route('modules.index')->with('success', "$moduleName status updated!");
+}
+```
+
+---
+
+### 3. Delete Module
+
+#### **Route**
+
+```php
+Route::delete('/modules/{moduleName}', [ModuleController::class, 'deleteModule'])->name('modules.delete');
+```
+
+#### **Controller Method**
+
+```php
+public function deleteModule($moduleName)
+{
+    $modulePath = base_path("modules/$moduleName");
+
+    if (!File::exists($modulePath)) {
+        return redirect()->route('modules.index')->withErrors(['Module not found.']);
+    }
+
+    File::deleteDirectory($modulePath);
+
+    $migrationPath = "$modulePath/Migrations";
+    if (File::isDirectory($migrationPath)) {
+        \Artisan::call('migrate:rollback', ['--path' => $migrationPath]);
+    }
+
+    return redirect()->route('modules.index')->with('success', "Module '$moduleName' has been deleted successfully.");
+}
+```
+
+---
+
+## Dynamic Loading of Modules
+
+### 1. Service Provider
+
+Automatically load active modules during application runtime.
+
+#### **Code**
+
+```php
+namespace App\Providers;
+
+use Illuminate\Support\Facades\File;
+use Illuminate\Support\ServiceProvider;
+
+class ModuleServiceProvider extends ServiceProvider
+{
+    public function boot()
+    {
+        $modulePath = base_path('modules');
+        $modules = File::directories($modulePath);
+
+        foreach ($modules as $module) {
+            $configPath = $module . '/module.json';
+
+            if (File::exists($configPath)) {
+                $config = json_decode(File::get($configPath), true);
+
+                if ($config['status'] === 'active') {
+                    $this->loadModule($module);
+                }
+            }
+        }
+    }
+
+    private function loadModule($modulePath)
+    {
+        if (File::exists($modulePath . '/routes.php')) {
+            $this->loadRoutesFrom($modulePath . '/routes.php');
+        }
+
+        if (File::isDirectory($modulePath . '/Views')) {
+            $this->loadViewsFrom($modulePath . '/Views', basename($modulePath));
+        }
+
+        if (File::isDirectory($modulePath . '/Migrations')) {
+            $this->loadMigrationsFrom($modulePath . '/Migrations');
+        }
+    }
+}
+```
+
+---
+
+## Testing the Module Management System
+
+1. **Upload a Module**:
+    - Use the upload form to upload a `.zip` file containing a module.
+    - Verify that the module appears in the modules list.
+
+2. **Activate/Deactivate a Module**:
+    - Toggle the status of a module using the provided buttons.
+    - Verify that active modules are loaded dynamically.
+
+3. **Delete a Module**:
+    - Delete a module and ensure its directory and database changes are removed.
+
+4. **Check Sidebar Integration**:
+    - Verify that only active modules appear in the navigation sidebar.
+
+---
+
+## Conclusion
+
+This modular management system ensures scalability and flexibility for Laravel applications by allowing developers to dynamically manage features without directly modifying the core codebase. The modular approach promotes clean architecture and better maintainability.
+
+----
+By Mike M.T Njovu
+
+[Send Email](mailto:mikemtnjovu@gmail.com)
