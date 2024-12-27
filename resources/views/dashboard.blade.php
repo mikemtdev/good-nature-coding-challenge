@@ -25,19 +25,26 @@
 
                 @php
                     $formated_total_amount = new NumberFormatter("en", NumberFormatter::CURRENCY);
-                @endphp
-                <div
-                    class="w-full max-w-sm p-4 bg-white dark:bg-gray-800 rounded-lg shadow sm:p-8 ">
 
-                    <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Total Loans</h3>
-                    <p class="mt-4 text-3xl font-bold text-gray-900 dark:text-gray-100">{{  $formated_total_amount->formatCurrency($total_borrowed, "ZMW")}}</p>
-                    <a
-                        href="/loans"
-                        class="mt-2 inline-block text-sm text-green-600 hover:underline"
-                    >
-                        Manage Loans
-                    </a>
-                </div>
+                @endphp
+                @if(\App\Helpers\ModuleHelper::isModuleLoaded("LoanManagement"))
+                    <div
+                        class="w-full max-w-sm p-4 bg-white dark:bg-gray-800 rounded-lg shadow sm:p-8 ">
+
+                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Total Loans</h3>
+                        <p class="mt-4 text-3xl font-bold text-gray-900 dark:text-gray-100">{{  $formated_total_amount->formatCurrency($total_borrowed, "ZMW")}}</p>
+                        <a
+                            href="/loans"
+                            class="mt-2 inline-block text-sm text-green-600 hover:underline"
+                        >
+                            Manage Loans
+                        </a>
+                    </div>
+
+                @endif
+
+
+                    @if(\App\Helpers\ModuleHelper::isModuleLoaded("LoanManagement"))
                 {{--Card three--}}
                 <div  class="w-full max-w-sm p-4 bg-white dark:bg-gray-800 rounded-lg shadow sm:p-8 ">
                     <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Loan Status</h3>
@@ -65,7 +72,7 @@
                         View Detailed Reports
                     </a>
                 </div>
-
+                @endif
             </div>
 
         </div>
