@@ -72,41 +72,13 @@
                     </td>
                 </tr>
             @endforeach
-            <tr class="border-t">
-                <td class="px-4 py-3 text-gray-900 dark:text-gray-100">1</td>
-                <td class="px-4 py-3 text-gray-900 dark:text-gray-100">John Doe</td>
-                <td class="px-4 py-3 text-gray-900 dark:text-gray-100">123-456-7890</td>
-                <td class="px-4 py-3 text-gray-900 dark:text-gray-100">Village A</td>
-                <td class="px-4 py-3">
-                    <div class="flex space-x-2">
-                        <a
-                            href="/farmers/1/edit"
-                            class="px-3 py-1 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
-                        >
-                            Edit
-                        </a>
-                        <form
-                            action="/farmers/1"
-                            method="POST"
-                            onsubmit="return confirm('Are you sure you want to delete this farmers?')"
-                        >
-                            <input type="hidden" name="_method" value="DELETE" />
-                            <input
-                                type="submit"
-                                value="Delete"
-                                class="px-3 py-1 bg-red-500 text-white rounded-lg hover:bg-red-600 cursor-pointer"
-                            />
-                        </form>
-                    </div>
-                </td>
-            </tr>
+
             <!-- Repeat rows dynamically -->
             </tbody>
         </table>
     </div>
 
-    <!-- Pagination -->
-    <!-- Pagination Links -->
+    <!-- Pagination  -->
     <div class="mt-6">
         {{ $farmers->links() }}
     </div>
