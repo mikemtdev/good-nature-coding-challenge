@@ -14,7 +14,7 @@ class ModuleHelper
      * @return bool
      */
 
-    public static function getModuleMetada(string $moduleName)
+    public static function getModuleMetadata(string $moduleName)
     {
         $modulePath = base_path("modules/$moduleName/module.json");
 
@@ -52,5 +52,18 @@ class ModuleHelper
         }
 
         return $modules;
+    }
+
+    /**
+     * Check if a module is active.
+     *
+     * @param string $moduleName
+     * @return bool
+     */
+
+    public static function isModuleLoaded($moduleName)
+    {
+        $metadata = self::getModuleMetadata($moduleName);
+        return $metadata && $metadata['status'] === 'active';
     }
 }
