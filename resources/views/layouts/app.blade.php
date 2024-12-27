@@ -81,28 +81,36 @@
                                         Farmers
                                     </a>
                                 </li>
-                                <li>
-                                    <a
-                                        href="/loans"
-                                        class="flex items-center px-4 py-2 mt-2 dark:text-white text-gray-700 rounded hover:bg-gray-200"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            class="w-5 h-5 mr-2"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
+
+                                @php
+                                    $activeModules = array_filter(\App\Helpers\ModuleHelper::getAllModulesMetadata(), fn($module) => $module['status'] === 'active');
+                                    @endphp
+
+                                @foreach ($activeModules as $module)
+                                    <li>
+                                        <a
+                                            href="{{ $module["href"] }}"
+                                            class="flex items-center px-4 py-2 mt-2 dark:text-white text-gray-700 rounded hover:bg-gray-200"
                                         >
-                                            <path
-                                                stroke-linecap="round"
-                                                stroke-linejoin="round"
-                                                stroke-width="2"
-                                                d="M8 17l4-4-4-4m4 4H4m14 0a9 9 0 11-18 0 9 9 0 0118 0z"
-                                            />
-                                        </svg>
-                                        Loans
-                                    </a>
-                                </li>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                class="w-5 h-5 mr-2"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    stroke-linecap="round"
+                                                    stroke-linejoin="round"
+                                                    stroke-width="2"
+                                                    d="M8 17l4-4-4-4m4 4H4m14 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                                                />
+                                            </svg>
+                                            {{$module['name']}}
+                                        </a>
+                                    </li>
+                                @endforeach
+
                                 <li>
                                     <a
                                         href="/modules"
