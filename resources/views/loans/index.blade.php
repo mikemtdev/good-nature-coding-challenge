@@ -2,7 +2,15 @@
 
     <div class="p-6 max-w-7xl mx-auto">
 
-
+        <div class="flex  items-center justify-between pb-4 border-b border-gray-300">
+            <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100">Loans Management</h1>
+            <a
+                href="/loans/create"
+                class="px-4 py-2 bg-blue-500 text-white font-medium rounded-lg hover:bg-blue-600"
+            >
+                + Add Loan
+            </a>
+        </div>
         <!-- Loan Table -->
         <div class="mt-6 bg-white dark:bg-gray-800 shadow rounded-lg">
             <table class="w-full text-left">
