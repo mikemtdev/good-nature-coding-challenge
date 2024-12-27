@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FarmerController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\ReportController;
+use  App\Http\Controllers\ModulesController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -32,7 +33,8 @@ Route::post('/loans/{loan}/reject', [LoanController::class, 'reject'])->name('lo
 Route::post('/loans/{loan}/repaid', [LoanController::class, 'markAsRepaid'])->name('loans.repaid');
 
 // Modules
-
+Route::resource('/modules',ModulesController::class);
+Route::post('/modules/toggle/{moduleName}', [ModulesController::class, 'toggle'])->name('modules.toggle');
 
 // Reports
 Route::get('/reports', [ReportController::class, 'index'])->name('reports');
