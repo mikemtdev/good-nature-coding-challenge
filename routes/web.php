@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\FarmerController;
+use App\Http\Controllers\LoanController;
+use App\Http\Controllers\ReportController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -31,6 +33,9 @@ Route::post('/loans/{loan}/repaid', [LoanController::class, 'markAsRepaid'])->na
 
 // Modules
 
+
+// Reports
+Route::get('/reports', [ReportController::class, 'index'])->name('reports');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
