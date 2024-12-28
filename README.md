@@ -1,10 +1,63 @@
-# Documentation: Dynamic Module Management in Laravel
+# Documentation: Farmer Management System 
 
 ## Overview
 
-This documentation provides a comprehensive guide for managing modules dynamically in a Laravel application. The module management system allows uploading, activating, deactivating, listing, and deleting modules. Each module is self-contained, with its routes, views, controllers, and configuration stored in the `modules/` directory.
+This documentation provides a comprehensive guide for the Farmer Management System with dynamic modules. The Farmer Management System includes a module management feature that allows uploading, activating, deactivating, listing, and deleting modules. Each module is self-contained, with its routes, views, controllers, and configuration stored in the `modules/` directory.
 
 ---
+
+
+## Setup Laravel
+
+**1. Install Related packages to running a laravel project**
+
+**2. Configure .env for Database**
+
+Edit the .env file in the project root to set up database variables:
+
+``` env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=your_database_name
+DB_USERNAME=your_database_user
+DB_PASSWORD=your_database_password 
+```
+
+Run the following command to apply the configuration and generate the application key:
+``` bash
+php artisan config:clear
+php artisan key:generate
+```
+**3. Set Up the Database**
+
+Create the database specified in the .env file, then run migrations:
+
+```bash
+php artisan migrate
+```
+**4. Serve the Application**
+
+Start the development server:
+
+```bash 
+php artisan serve
+```
+
+Your Laravel application will be available at http://127.0.0.1:8000.
+
+Tech Stack
+
+The module management system is built using the following technologies:
+
+Backend Framework: Laravel
+
+Frontend Templating: Blade + TailwindCSS
+
+Database: MySQL
+
+
+----
 
 ## Features
 
@@ -184,6 +237,39 @@ public function deleteModule($moduleName)
     return redirect()->route('modules.index')->with('success', "Module '$moduleName' has been deleted successfully.");
 }
 ```
+
+---
+
+## Loan Module Integration
+
+A prebuilt loan management module can be added to the project directly via the dashboard. It allows managing loans and integrates seamlessly into the existing module management system.
+
+### Loan Module Overview
+
+- **Name**: Loan Management
+
+- **Description**: Provides functionalities for managing loans for farmers, including creating, updating, and tracking loans.
+
+- **Key Features**:
+
+  - CRUD operations for loans
+
+  - Integration with farmer data
+
+  - Loan status tracking (e.g., pending, approved, rejected)
+
+### Adding the Loan Module
+
+1. Navigate to the Modules Upload section in the dashboard. 
+2. Download the LoanManagement.zip module package from the provided source.
+
+```
+Note: The loan module is in the route directory of this project named: LoanManagement.zip
+```
+
+3. Upload the LoanManagement.zip file through the upload form. 
+4. Activate the module from the Modules List section.
+
 
 ---
 
